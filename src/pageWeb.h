@@ -2,9 +2,9 @@ String HTML PROGMEM = R"=====(
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>test</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ESP32 FSorOTA</title>
   <style>
     html, body {
       width: 100%;
@@ -17,34 +17,34 @@ String HTML PROGMEM = R"=====(
       justify-content: center;
     }
     main {
-      width:60%;
+      width:800px;
     }
-    .fieldsetgrey {
+    #fieldsetgrey {
       background-color: #f0f0f0;
       padding: 10px;
       margin-bottom: 20px;
       border: 3px solid black;
       border-radius: 6px;
     }
-    .fieldsetgreen {
+    #fieldsetgreen {
       background-color: #e0f7e0;
       padding: 10px;
       margin-bottom: 20px;
       border: 2px solid #4CAF50;
       border-radius: 6px;
     }
-    .fieldsetyellow {
+    #fieldsetyellow {
       background-color: #fff9e0;
       padding: 10px;
       margin-bottom: 20px;
       border: 2px solid #FFCE00;
       border-radius: 6px;
     }
-    .fieldsetred {
+    #fieldsetred {
       background-color: #f7e0e0;
       border: 2px solid #F70000;
     }
-    .fieldsethome {
+    #fieldsethome {
       border: 3px solid black;
       border-radius: 6px;
       display: flex;
@@ -62,21 +62,17 @@ String HTML PROGMEM = R"=====(
       justify-content: space-around;
     }
     input[type=file] {
-      width: 350px;
+      width: 400px;
       max-width: 100%;
     }
     #uploadForm input {
       margin-left: 10px;
       margin-bottom: 10px;
+      font-weight: bold;
+      font-size: 16px;
     }
     #uploadForm p {
       margin-left: 20px;
-      font-weight: bold;
-      font-size: 1.5em;
-    }
-    input[type=file] {
-      width: 350px;
-      max-width: 100%;
     }
     input[type="submit"], input[type=file]::file-selector-button  {
       color: white;
@@ -131,7 +127,6 @@ String HTML PROGMEM = R"=====(
         margin-bottom: 10px;
         font-weight: bold;
         background-color: #FFDE00;
-        color: #A52A2A;
         padding: 5px 5px;
         border: 2px solid #FFA500;
         border-radius: 8px;
@@ -220,9 +215,9 @@ String HTML PROGMEM = R"=====(
 </head>
 <body>
   <main>
-    <fieldset class="fieldsetgrey">
+    <fieldset id="fieldsetgrey">
       <legend>ESP32 FSorOTA</legend>
-      <fieldset class="fieldsetgreen">
+      <fieldset id="fieldsetgreen">
         <legend>OTA ou Upload d'un fichier dans LittleFS</legend>
         <form id="uploadForm" method="POST" action="/upload" enctype="multipart/form-data">
           <p><input id="fileInput" type="file" name="file"></p>
@@ -230,16 +225,16 @@ String HTML PROGMEM = R"=====(
         </form>
         <progress id="progressBar" value="0" max="100"></progress>
       </fieldset>
-      <fieldset class="fieldsetyellow">
+      <fieldset id="fieldsetyellow">
         <legend>Espace disponible dans LittleFS</legend>
         <pre id="SizeList"></pre>
       </fieldset>
-      <fieldset class="fieldsetred">
+      <fieldset id="fieldsetred">
         <legend>Fichiers présents dans LittleFS</legend>
         <pre id="fileList"></pre>
       </fieldset>
     </fieldset>
-    <fieldset class="fieldsethome">
+    <fieldset id="fieldsethome">
       <legend>ESP32 Home</legend>
       <button class="homeButton" onclick="window.location.href = '/'">Retour</button>
     </fieldset>
@@ -251,6 +246,9 @@ String HTML PROGMEM = R"=====(
     </div>
   </main>
   <script>
+    const fieldsetyellow = document.getElementById('fieldsetyellow');
+    const fieldsetred = document.getElementById('fieldsetred');
+    const fieldsethome = document.getElementById('fieldsethome');
     const form = document.getElementById('uploadForm');
     const progressBar = document.getElementById('progressBar');
     progressBar.style.display = 'none';
@@ -325,8 +323,9 @@ String HTML PROGMEM = R"=====(
       xhr.open('GET', '/list', true);
       xhr.onload = function() {
         if (xhr.status === 200) {
+          if (xhr.responseText === '') { fileList.innerHTML = 'Aucun fichier'; }
+          else { fileList.innerHTML = ''; }
           const files = xhr.responseText.split('\n').filter(file => file);
-          fileList.innerHTML = '';
           files.forEach(file => {
             const fileDiv = document.createElement('div');
             fileDiv.textContent = file;
@@ -363,6 +362,9 @@ String HTML PROGMEM = R"=====(
       event.preventDefault();
       var file = document.getElementById('fileInput').files[0];
       if (file) {
+        fieldsetyellow.disabled = true;
+        fieldsetred.disabled = true;
+        fieldsethome.disabled = true;
         if (file.size > freeSpace) {
           showAlert('Taille du fichier : ' + file.size + ' octets.\n' + 'Espace disponible : ' + freeSpace + ' octets.', 'Espace insuffisant');
           return;

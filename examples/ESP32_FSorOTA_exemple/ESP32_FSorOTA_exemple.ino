@@ -11,22 +11,24 @@ void setup(void) {
   Serial.println("Initialisation ...");
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
-  Serial.println("");
+  Serial.print("Connexion au réseau : ");
+  Serial.println(ssid);
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
   }
   Serial.println("");
-  Serial.print("Connected to ");
+  Serial.print("Connecté à ");
   Serial.println(ssid);
-  Serial.print("IP address: ");
+  Serial.print("Adresse IP : ");
   Serial.println(WiFi.localIP());
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
     request->send(200, "text/html", "<button onclick=\"window.location.href = '/FSorOTA';\">Cliquez Ici</button>");
   });
   ESP32_FSorOTA.begin(&server);
   server.begin();
-  Serial.println("HTTP server started");
+  Serial.print("Serveur HTTP démarré : http://");
+  Serial.println(WiFi.localIP());
   Serial.println("Initialisation OK");
 }
 
