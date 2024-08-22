@@ -1,0 +1,19 @@
+{
+  "name": "ESP32_FSorOTA",
+  "keywords": "ESP32_FSorOTA, OTA, Update, ESP8266, ESP32, over, the, air, firmware, filesystem, littlefs, spiffs",
+  "description": "OTA updates and FS on the Web",
+  "repository":
+  {
+    "type": "git",
+    "url": "https://github.com/weedmanu/ESP32_FSorOTA.git"
+  },
+  "authors":
+  [
+    {
+      "name": "Biglia Emmanuel",
+      "email": "terraspi13@gmail.com",
+      "maintainer": true
+    }
+  ],
+  "version": "1.0.0",
+}
